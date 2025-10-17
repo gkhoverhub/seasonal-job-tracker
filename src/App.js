@@ -71,172 +71,56 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #f0f9ff, #e0e7ff)', padding: '24px' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(240, 249, 255), rgb(224, 231, 255))', padding: '24px' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
         <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
-            Seasonal Job Tracker
-          </h1>
+          <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Seasonal Job Tracker</h1>
           <p style={{ color: '#4b5563' }}>Find and track seasonal positions in your area</p>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-          <StatCard label="Total Applications" value={stats.total} color="#ffffff" />
-          <StatCard label="Applied" value={stats.applied} color="#dbeafe" />
-          <StatCard label="Interviews" value={stats.interview} color="#fef3c7" />
-          <StatCard label="Rejected" value={stats.rejected} color="#fee2e2" />
-          <StatCard label="Offered" value={stats.offered} color="#dcfce7" />
+          <StatCard label="Total Applications" value={stats.total} bgColor="#ffffff" />
+          <StatCard label="Applied" value={stats.applied} bgColor="#dbeafe" />
+          <StatCard label="Interviews" value={stats.interview} bgColor="#fef3c7" />
+          <StatCard label="Rejected" value={stats.rejected} bgColor="#fee2e2" />
+          <StatCard label="Offered" value={stats.offered} bgColor="#dcfce7" />
         </div>
 
         <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', padding: '24px', marginBottom: '32px' }}>
           {!showForm ? (
             <button
               onClick={() => setShowForm(true)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                background: '#4f46e5',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '500',
-              }}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#4f46e5', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}
             >
               <Plus size={20} />
               Add New Application
             </button>
           ) : (
             <div>
-              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>
-                New Application
-              </h2>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>New Application</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                <input
-                  type="text"
-                  placeholder="Job Title"
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  style={{
-                    border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '16px',
-                    fontFamily: 'inherit',
-                  }}
-                />
-                <input
-                  type="text"
-                  placeholder="Company Name"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  style={{
-                    border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '16px',
-                    fontFamily: 'inherit',
-                  }}
-                />
+                <input type="text" placeholder="Job Title" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }} />
+                <input type="text" placeholder="Company Name" value={company} onChange={(e) => setCompany(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }} />
               </div>
-              <input
-                type="url"
-                placeholder="Job URL (optional)"
-                value={jobUrl}
-                onChange={(e) => setJobUrl(e.target.value)}
-                style={{
-                  width: '100%',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  fontSize: '16px',
-                  fontFamily: 'inherit',
-                  marginBottom: '16px',
-                }}
-              />
+              <input type="url" placeholder="Job URL (optional)" value={jobUrl} onChange={(e) => setJobUrl(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit', marginBottom: '16px' }} />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                <select
-                  value={applicationType}
-                  onChange={(e) => setApplicationType(e.target.value)}
-                  style={{
-                    border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '16px',
-                    fontFamily: 'inherit',
-                  }}
-                >
+                <select value={applicationType} onChange={(e) => setApplicationType(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
                   <option value="online">Online Application</option>
                   <option value="inperson">In Person</option>
                   <option value="email">Email</option>
                   <option value="phone">Phone Call</option>
                 </select>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  style={{
-                    border: '1px solid #d1d5db',
-                    borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '16px',
-                    fontFamily: 'inherit',
-                  }}
-                >
+                <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
                   <option value="applied">Applied</option>
                   <option value="interview">Interview Scheduled</option>
                   <option value="rejected">Rejected</option>
                   <option value="offered">Offered</option>
                 </select>
               </div>
-              <textarea
-                placeholder="Notes (optional)"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows="3"
-                style={{
-                  width: '100%',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  fontSize: '16px',
-                  fontFamily: 'inherit',
-                  marginBottom: '16px',
-                }}
-              />
+              <textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} rows="3" style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit', marginBottom: '16px' }} />
               <div style={{ display: 'flex', gap: '12px' }}>
-                <button
-                  onClick={addApplication}
-                  style={{
-                    background: '#16a34a',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: '500',
-                  }}
-                >
-                  Save Application
-                </button>
-                <button
-                  onClick={resetForm}
-                  style={{
-                    background: '#9ca3af',
-                    color: 'white',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: '500',
-                  }}
-                >
-                  Cancel
-                </button>
+                <button onClick={addApplication} style={{ background: '#16a34a', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}>Save Application</button>
+                <button onClick={resetForm} style={{ background: '#9ca3af', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}>Cancel</button>
               </div>
             </div>
           )}
@@ -245,32 +129,9 @@ export default function App() {
         <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ position: 'relative', flex: 1 }}>
             <Search style={{ position: 'absolute', left: '12px', top: '12px', color: '#9ca3af' }} size={20} />
-            <input
-              type="text"
-              placeholder="Search by job title or company..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                border: '1px solid #d1d5db',
-                borderRadius: '8px',
-                padding: '12px 12px 12px 40px',
-                fontSize: '16px',
-                fontFamily: 'inherit',
-              }}
-            />
+            <input type="text" placeholder="Search by job title or company..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px 12px 12px 40px', fontSize: '16px', fontFamily: 'inherit' }} />
           </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            style={{
-              border: '1px solid #d1d5db',
-              borderRadius: '8px',
-              padding: '12px',
-              fontSize: '16px',
-              fontFamily: 'inherit',
-            }}
-          >
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
             <option value="all">All Statuses</option>
             <option value="applied">Applied</option>
             <option value="interview">Interviews</option>
@@ -286,57 +147,27 @@ export default function App() {
             </div>
           ) : (
             filteredApps.map(app => (
-              <div
-                key={app.id}
-                style={{
-                  background: 'white',
-                  borderRadius: '8px',
-                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-                  padding: '24px',
-                }}
-              >
+              <div key={app.id} style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                      <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937' }}>
-                        {app.jobTitle}
-                      </h3>
-                      <span style={{ fontSize: '14px', background: '#e5e7eb', color: '#374151', padding: '4px 12px', borderRadius: '9999px' }}>
-                        {app.applicationType}
-                      </span>
+                      <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937' }}>{app.jobTitle}</h3>
+                      <span style={{ fontSize: '14px', background: '#e5e7eb', color: '#374151', padding: '4px 12px', borderRadius: '9999px' }}>{app.applicationType}</span>
                     </div>
                     <p style={{ color: '#4b5563', marginBottom: '8px' }}>{app.company}</p>
                     <p style={{ fontSize: '14px', color: '#6b7280' }}>Applied: {app.dateApplied}</p>
                   </div>
-                  <button
-                    onClick={() => deleteApplication(app.id)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}
-                  >
+                  <button onClick={() => deleteApplication(app.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
                     <Trash2 size={20} />
                   </button>
                 </div>
 
                 {app.notes && (
-                  <p style={{ color: '#374151', marginBottom: '12px', fontStyle: 'italic' }}>
-                    "{app.notes}"
-                  </p>
+                  <p style={{ color: '#374151', marginBottom: '12px', fontStyle: 'italic' }}>"{app.notes}"</p>
                 )}
 
                 {app.jobUrl && (
-                  <a
-                    href={app.jobUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      color: '#4f46e5',
-                      textDecoration: 'none',
-                      marginBottom: '12px',
-                      fontSize: '14px',
-                    }}
-                  >
+                  <a href={app.jobUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4f46e5', textDecoration: 'none', marginBottom: '12px', fontSize: '14px' }}>
                     View Job Posting <ExternalLink size={14} />
                   </a>
                 )}
@@ -346,19 +177,7 @@ export default function App() {
                     <button
                       key={s}
                       onClick={() => updateStatus(app.id, s)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        background: app.status === s ? '#4f46e5' : '#e5e7eb',
-                        color: app.status === s ? 'white' : '#374151',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                      }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', background: app.status === s ? '#4f46e5' : '#e5e7eb', color: app.status === s ? 'white' : '#374151', fontSize: '14px', fontWeight: '500' }}
                     >
                       {app.status === s ? <CheckCircle size={16} /> : <Circle size={16} />}
                       {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -374,9 +193,9 @@ export default function App() {
   );
 }
 
-function StatCard({ label, value, color }) {
+function StatCard({ label, value, bgColor }) {
   return (
-    <div style={{ background: color, borderRadius: '8px', padding: '16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
+    <div style={{ background: bgColor, borderRadius: '8px', padding: '16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
       <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>{value}</div>
       <div style={{ fontSize: '14px', color: '#6b7280' }}>{label}</div>
     </div>
