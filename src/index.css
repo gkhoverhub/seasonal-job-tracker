@@ -11,12 +11,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-```
-
-**Step 4: Push to GitHub**
-
-Using GitHub Desktop or terminal:
-```
-git add .
-git commit -m "Remove CSS files and fix build"
-git push
