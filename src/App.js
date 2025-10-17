@@ -6,11 +6,9 @@ import { Briefcase, Search, LogOut, Lock } from 'lucide-react';
 export default function App() {
   const [currentPage, setCurrentPage] = useState('tracker');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [password, setPassword] = useState('');
   const [loginAttempt, setLoginAttempt] = useState('');
   const [error, setError] = useState('');
 
-  // Check if user is already logged in (from session storage)
   useEffect(() => {
     const isAuthenticated = sessionStorage.getItem('jobTrackerAuth');
     if (isAuthenticated) {
@@ -18,8 +16,7 @@ export default function App() {
     }
   }, []);
 
-  // Simple password - you can change this
-  const CORRECT_PASSWORD = 'BanjoSky96001!';
+  const CORRECT_PASSWORD = 'GarryMcDarby2024';
 
   const handleLogin = () => {
     if (loginAttempt === CORRECT_PASSWORD) {
@@ -38,6 +35,7 @@ export default function App() {
     sessionStorage.removeItem('jobTrackerAuth');
     setLoginAttempt('');
     setError('');
+    setCurrentPage('tracker');
   };
 
   if (!isLoggedIn) {
@@ -101,7 +99,6 @@ export default function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(240, 249, 255), rgb(224, 231, 255))' }}>
-      {/* Navigation Bar */}
       <div style={{ background: 'white', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '70px' }}>
           <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>Seasonal Job Tool</h1>
@@ -172,7 +169,6 @@ export default function App() {
         </div>
       </div>
 
-      {/* Page Content */}
       <div>
         {currentPage === 'tracker' && <JobTracker />}
         {currentPage === 'scraper' && <JobScraper />}
