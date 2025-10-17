@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, CheckCircle, Circle, ExternalLink, Search } from 'lucide-react';
-import './App.css';
 
-export default function JobTracker() {
+export default function App() {
   const [applications, setApplications] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [jobTitle, setJobTitle] = useState('');
@@ -72,76 +71,103 @@ export default function JobTracker() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Seasonal Job Tracker</h1>
-          <p className="text-gray-600">Find and track seasonal positions in your area</p>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, #f0f9ff, #e0e7ff)', padding: '24px' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '32px' }}>
+          <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
+            Seasonal Job Tracker
+          </h1>
+          <p style={{ color: '#4b5563' }}>Find and track seasonal positions in your area</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <div className="bg-white rounded-lg p-4 shadow">
-            <div className="text-2xl font-bold text-gray-800">{stats.total}</div>
-            <div className="text-sm text-gray-600">Total Applications</div>
-          </div>
-          <div className="bg-blue-100 rounded-lg p-4 shadow">
-            <div className="text-2xl font-bold text-blue-600">{stats.applied}</div>
-            <div className="text-sm text-blue-700">Applied</div>
-          </div>
-          <div className="bg-yellow-100 rounded-lg p-4 shadow">
-            <div className="text-2xl font-bold text-yellow-600">{stats.interview}</div>
-            <div className="text-sm text-yellow-700">Interviews</div>
-          </div>
-          <div className="bg-red-100 rounded-lg p-4 shadow">
-            <div className="text-2xl font-bold text-red-600">{stats.rejected}</div>
-            <div className="text-sm text-red-700">Rejected</div>
-          </div>
-          <div className="bg-green-100 rounded-lg p-4 shadow">
-            <div className="text-2xl font-bold text-green-600">{stats.offered}</div>
-            <div className="text-sm text-green-700">Offered</div>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+          <StatCard label="Total Applications" value={stats.total} color="#ffffff" />
+          <StatCard label="Applied" value={stats.applied} color="#dbeafe" />
+          <StatCard label="Interviews" value={stats.interview} color="#fef3c7" />
+          <StatCard label="Rejected" value={stats.rejected} color="#fee2e2" />
+          <StatCard label="Offered" value={stats.offered} color="#dcfce7" />
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', padding: '24px', marginBottom: '32px' }}>
           {!showForm ? (
             <button
               onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: '#4f46e5',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '16px',
+                fontWeight: '500',
+              }}
             >
               <Plus size={20} />
               Add New Application
             </button>
           ) : (
             <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">New Application</h2>
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>
+                New Application
+              </h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <input
                   type="text"
                   placeholder="Job Title"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '16px',
+                    fontFamily: 'inherit',
+                  }}
                 />
                 <input
                   type="text"
                   placeholder="Company Name"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <input
-                  type="url"
-                  placeholder="Job URL (optional)"
-                  value={jobUrl}
-                  onChange={(e) => setJobUrl(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 md:col-span-2"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '16px',
+                    fontFamily: 'inherit',
+                  }}
                 />
               </div>
-              <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <input
+                type="url"
+                placeholder="Job URL (optional)"
+                value={jobUrl}
+                onChange={(e) => setJobUrl(e.target.value)}
+                style={{
+                  width: '100%',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontFamily: 'inherit',
+                  marginBottom: '16px',
+                }}
+              />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <select
                   value={applicationType}
                   onChange={(e) => setApplicationType(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '16px',
+                    fontFamily: 'inherit',
+                  }}
                 >
                   <option value="online">Online Application</option>
                   <option value="inperson">In Person</option>
@@ -151,7 +177,13 @@ export default function JobTracker() {
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  style={{
+                    border: '1px solid #d1d5db',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    fontSize: '16px',
+                    fontFamily: 'inherit',
+                  }}
                 >
                   <option value="applied">Applied</option>
                   <option value="interview">Interview Scheduled</option>
@@ -163,19 +195,45 @@ export default function JobTracker() {
                 placeholder="Notes (optional)"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"
                 rows="3"
+                style={{
+                  width: '100%',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  fontSize: '16px',
+                  fontFamily: 'inherit',
+                  marginBottom: '16px',
+                }}
               />
-              <div className="flex gap-3">
+              <div style={{ display: 'flex', gap: '12px' }}>
                 <button
                   onClick={addApplication}
-                  className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
+                  style={{
+                    background: '#16a34a',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                  }}
                 >
                   Save Application
                 </button>
                 <button
                   onClick={resetForm}
-                  className="bg-gray-400 text-white px-6 py-3 rounded-lg hover:bg-gray-500 transition"
+                  style={{
+                    background: '#9ca3af',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                  }}
                 >
                   Cancel
                 </button>
@@ -184,21 +242,34 @@ export default function JobTracker() {
           )}
         </div>
 
-        <div className="mb-6 flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+        <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search style={{ position: 'absolute', left: '12px', top: '12px', color: '#9ca3af' }} size={20} />
             <input
               type="text"
               placeholder="Search by job title or company..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              style={{
+                width: '100%',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                padding: '12px 12px 12px 40px',
+                fontSize: '16px',
+                fontFamily: 'inherit',
+              }}
             />
           </div>
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            style={{
+              border: '1px solid #d1d5db',
+              borderRadius: '8px',
+              padding: '12px',
+              fontSize: '16px',
+              fontFamily: 'inherit',
+            }}
           >
             <option value="all">All Statuses</option>
             <option value="applied">Applied</option>
@@ -208,58 +279,86 @@ export default function JobTracker() {
           </select>
         </div>
 
-        <div className="space-y-4">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {filteredApps.length === 0 ? (
-            <div className="bg-white rounded-lg p-8 text-center text-gray-500">
+            <div style={{ background: 'white', borderRadius: '8px', padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
               <p>No applications yet. Start by adding your first application!</p>
             </div>
           ) : (
             filteredApps.map(app => (
-              <div key={app.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-xl font-bold text-gray-800">{app.jobTitle}</h3>
-                      <span className="text-sm bg-gray-200 text-gray-700 px-3 py-1 rounded-full">
+              <div
+                key={app.id}
+                style={{
+                  background: 'white',
+                  borderRadius: '8px',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  padding: '24px',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937' }}>
+                        {app.jobTitle}
+                      </h3>
+                      <span style={{ fontSize: '14px', background: '#e5e7eb', color: '#374151', padding: '4px 12px', borderRadius: '9999px' }}>
                         {app.applicationType}
                       </span>
                     </div>
-                    <p className="text-gray-600 mb-2">{app.company}</p>
-                    <p className="text-sm text-gray-500">Applied: {app.dateApplied}</p>
+                    <p style={{ color: '#4b5563', marginBottom: '8px' }}>{app.company}</p>
+                    <p style={{ fontSize: '14px', color: '#6b7280' }}>Applied: {app.dateApplied}</p>
                   </div>
                   <button
                     onClick={() => deleteApplication(app.id)}
-                    className="text-red-500 hover:text-red-700 transition"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}
                   >
                     <Trash2 size={20} />
                   </button>
                 </div>
 
                 {app.notes && (
-                  <p className="text-gray-700 mb-3 italic">"{app.notes}"</p>
+                  <p style={{ color: '#374151', marginBottom: '12px', fontStyle: 'italic' }}>
+                    "{app.notes}"
+                  </p>
                 )}
 
                 {app.jobUrl && (
-                  
+                  <a
                     href={app.jobUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-indigo-600 hover:text-indigo-800 mb-3 text-sm"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      color: '#4f46e5',
+                      textDecoration: 'none',
+                      marginBottom: '12px',
+                      fontSize: '14px',
+                    }}
                   >
                     View Job Posting <ExternalLink size={14} />
                   </a>
                 )}
 
-                <div className="flex gap-2 flex-wrap">
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {['applied', 'interview', 'rejected', 'offered'].map(s => (
                     <button
                       key={s}
                       onClick={() => updateStatus(app.id, s)}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
-                        app.status === s
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        background: app.status === s ? '#4f46e5' : '#e5e7eb',
+                        color: app.status === s ? 'white' : '#374151',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                      }}
                     >
                       {app.status === s ? <CheckCircle size={16} /> : <Circle size={16} />}
                       {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -271,6 +370,15 @@ export default function JobTracker() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function StatCard({ label, value, color }) {
+  return (
+    <div style={{ background: color, borderRadius: '8px', padding: '16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
+      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>{value}</div>
+      <div style={{ fontSize: '14px', color: '#6b7280' }}>{label}</div>
     </div>
   );
 }
