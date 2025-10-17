@@ -1,250 +1,212 @@
-import React, { useState } from 'react';
-import { Search, Send, AlertCircle, CheckCircle, ExternalLink, Loader } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Trash2, CheckCircle, Circle, ExternalLink, Search } from 'lucide-react';
 
-export default function JobScraper() {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [applicationStatus, setApplicationStatus] = useState({});
+export default function JobTracker() {
+  const [applications, setApplications] = useState(() => {
+    // Load from localStorage on first render
+    const saved = localStorage.getItem('jobApplications');
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  // Get user profile from environment variables (secure - not hardcoded)
-  const userProfile = {
-    fullName: process.env.REACT_APP_USER_NAME || 'User',
-    phone: process.env.REACT_APP_USER_PHONE || '',
-    email: process.env.REACT_APP_USER_EMAIL || '',
-    experience: process.env.REACT_APP_USER_EXPERIENCE || '',
-    skills: process.env.REACT_APP_USER_SKILLS || '',
-    availability: process.env.REACT_APP_USER_AVAILABILITY || '',
-    motivation: process.env.REACT_APP_USER_MOTIVATION || '',
-    certifications: process.env.REACT_APP_USER_CERTIFICATIONS || '',
-  };
+  // Save to localStorage whenever applications change
+  useEffect(() => {
+    localStorage.setItem('jobApplications', JSON.stringify(applications));
+  }, [applications]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
+  const [company, setCompany] = useState('');
+  const [jobUrl, setJobUrl] = useState('');
+  const [applicationType, setApplicationType] = useState('online');
+  const [status, setStatus] = useState('applied');
+  const [notes, setNotes] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [filterStatus, setFilterStatus] = useState('all');
 
-  const searchJobs = async () => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      // Call the backend API
-      const response = await fetch('/api/scrapeJobs');
-      const data = await response.json();
-
-      if (data.success) {
-        setJobs(data.jobs);
-      } else {
-        setError('Failed to fetch jobs. Please try again.');
-      }
-    } catch (err) {
-      setError(`Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getMissingFields = (job) => {
-    const missing = [];
-    if (!userProfile.fullName || userProfile.fullName === 'User') missing.push('Full Name');
-    if (!userProfile.email) missing.push('Email');
-    if (!userProfile.phone) missing.push('Phone');
-    return missing;
-  };
-
-  const handleApplyJob = (job) => {
-    const missing = getMissingFields(job);
-    if (missing.length > 0) {
-      alert(`Missing required fields:\n\n${missing.join('\n')}\n\nPlease set environment variables in Vercel.`);
+  const addApplication = () => {
+    if (!jobTitle || !company) {
+      alert('Please fill in job title and company');
       return;
     }
 
-    setApplicationStatus(prev => ({
-      ...prev,
-      [job.id]: 'submitted'
-    }));
+    const newApp = {
+      id: Date.now(),
+      jobTitle,
+      company,
+      jobUrl,
+      applicationType,
+      status,
+      notes,
+      dateApplied: new Date().toLocaleDateString(),
+    };
 
-    // Show success message
-    setTimeout(() => {
-      alert(`Application submitted for ${job.title} at ${job.company}!\n\nThis has been added to your tracker.`);
-    }, 500);
+    setApplications([newApp, ...applications]);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setJobTitle('');
+    setCompany('');
+    setJobUrl('');
+    setApplicationType('online');
+    setStatus('applied');
+    setNotes('');
+    setShowForm(false);
+  };
+
+  const deleteApplication = (id) => {
+    setApplications(applications.filter(app => app.id !== id));
+  };
+
+  const updateStatus = (id, newStatus) => {
+    setApplications(applications.map(app =>
+      app.id === id ? { ...app, status: newStatus } : app
+    ));
+  };
+
+  const filteredApps = applications.filter(app => {
+    const matchesStatus = filterStatus === 'all' || app.status === filterStatus;
+    const matchesSearch = searchQuery === '' ||
+      app.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.company.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  const stats = {
+    total: applications.length,
+    applied: applications.filter(a => a.status === 'applied').length,
+    interview: applications.filter(a => a.status === 'interview').length,
+    rejected: applications.filter(a => a.status === 'rejected').length,
+    offered: applications.filter(a => a.status === 'offered').length,
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(to bottom right, rgb(240, 249, 255), rgb(224, 231, 255))', padding: '24px' }}>
+    <div style={{ padding: '24px' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-        {/* Header */}
         <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Job Finder & Auto-Apply</h1>
-          <p style={{ color: '#4b5563' }}>Find seasonal jobs and automatically apply with your profile</p>
+          <h1 style={{ fontSize: '36px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Application Tracker</h1>
+          <p style={{ color: '#4b5563' }}>Track and manage all your job applications</p>
         </div>
 
-        {/* Profile Summary */}
-        <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', padding: '20px', marginBottom: '24px', border: '2px solid #dbeafe' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#1f2937', marginBottom: '12px' }}>Your Profile</h2>
-          {userProfile.fullName === 'User' ? (
-            <div style={{ color: '#dc2626', display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <AlertCircle size={20} />
-              <span>Environment variables not set. Please configure in Vercel Settings.</span>
-            </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+          <StatCard label="Total Applications" value={stats.total} bgColor="#ffffff" />
+          <StatCard label="Applied" value={stats.applied} bgColor="#dbeafe" />
+          <StatCard label="Interviews" value={stats.interview} bgColor="#fef3c7" />
+          <StatCard label="Rejected" value={stats.rejected} bgColor="#fee2e2" />
+          <StatCard label="Offered" value={stats.offered} bgColor="#dcfce7" />
+        </div>
+
+        <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', padding: '24px', marginBottom: '32px' }}>
+          {!showForm ? (
+            <button
+              onClick={() => setShowForm(true)}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#4f46e5', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}
+            >
+              <Plus size={20} />
+              Add New Application
+            </button>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '12px' }}>
-              <div><strong>Name:</strong> {userProfile.fullName}</div>
-              <div><strong>Email:</strong> {userProfile.email}</div>
-              <div><strong>Phone:</strong> {userProfile.phone}</div>
-              <div><strong>Experience:</strong> {userProfile.experience}</div>
+            <div>
+              <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>New Application</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                <input type="text" placeholder="Job Title" value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }} />
+                <input type="text" placeholder="Company Name" value={company} onChange={(e) => setCompany(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }} />
+              </div>
+              <input type="url" placeholder="Job URL (optional)" value={jobUrl} onChange={(e) => setJobUrl(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit', marginBottom: '16px' }} />
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                <select value={applicationType} onChange={(e) => setApplicationType(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
+                  <option value="online">Online Application</option>
+                  <option value="inperson">In Person</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone Call</option>
+                </select>
+                <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
+                  <option value="applied">Applied</option>
+                  <option value="interview">Interview Scheduled</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="offered">Offered</option>
+                </select>
+              </div>
+              <textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} rows="3" style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit', marginBottom: '16px' }} />
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <button onClick={addApplication} style={{ background: '#16a34a', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}>Save Application</button>
+                <button onClick={resetForm} style={{ background: '#9ca3af', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}>Cancel</button>
+              </div>
             </div>
           )}
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div style={{ background: '#fee2e2', border: '1px solid #fecaca', borderRadius: '8px', padding: '16px', marginBottom: '24px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <AlertCircle size={24} style={{ color: '#dc2626', flexShrink: 0 }} />
-            <p style={{ color: '#7f1d1d' }}>{error}</p>
+        <div style={{ marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ position: 'relative', flex: 1 }}>
+            <Search style={{ position: 'absolute', left: '12px', top: '12px', color: '#9ca3af' }} size={20} />
+            <input type="text" placeholder="Search by job title or company..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px 12px 12px 40px', fontSize: '16px', fontFamily: 'inherit' }} />
           </div>
-        )}
-
-        {/* Search Button */}
-        <div style={{ marginBottom: '32px' }}>
-          <button
-            onClick={searchJobs}
-            disabled={loading}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: loading ? '#9ca3af' : '#4f46e5',
-              color: 'white',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              border: 'none',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              fontSize: '16px',
-              fontWeight: '500',
-            }}
-          >
-            {loading ? <Loader size={20} style={{ animation: 'spin 1s linear infinite' }} /> : <Search size={20} />}
-            {loading ? 'Searching...' : 'Search for Seasonal Jobs'}
-          </button>
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
+            <option value="all">All Statuses</option>
+            <option value="applied">Applied</option>
+            <option value="interview">Interviews</option>
+            <option value="rejected">Rejected</option>
+            <option value="offered">Offered</option>
+          </select>
         </div>
 
-        {/* Jobs List */}
-        {jobs.length > 0 && (
-          <div>
-            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>
-              Found {jobs.length} Jobs
-            </h2>
-            <div style={{ display: 'grid', gap: '16px' }}>
-              {jobs.map(job => {
-                const missing = getMissingFields(job);
-                const isApplied = applicationStatus[job.id] === 'submitted';
-
-                return (
-                  <div
-                    key={job.id}
-                    style={{
-                      background: 'white',
-                      borderRadius: '8px',
-                      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-                      padding: '20px',
-                      border: isApplied ? '2px solid #16a34a' : '1px solid #e5e7eb',
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937', marginBottom: '4px' }}>
-                          {job.title}
-                        </h3>
-                        <p style={{ color: '#4b5563', marginBottom: '4px' }}>
-                          <strong>{job.company}</strong> • {job.location}
-                        </p>
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '8px' }}>
-                          <span style={{ background: '#dbeafe', color: '#0369a1', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500' }}>
-                            {job.type}
-                          </span>
-                          <span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500' }}>
-                            {job.salary}
-                          </span>
-                          <span style={{ background: '#e5e7eb', color: '#374151', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '500' }}>
-                            {job.source}
-                          </span>
-                        </div>
-                        <p style={{ color: '#6b7280', fontSize: '14px' }}>{job.description}</p>
-                      </div>
-                      {isApplied && (
-                        <div style={{ marginLeft: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#16a34a' }}>
-                          <CheckCircle size={24} />
-                          <span style={{ fontWeight: 'bold' }}>Applied</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {missing.length > 0 && (
-                      <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', padding: '12px', marginBottom: '12px', display: 'flex', gap: '8px' }}>
-                        <AlertCircle size={20} style={{ color: '#dc2626', flexShrink: 0 }} />
-                        <div>
-                          <strong style={{ color: '#dc2626' }}>Missing Information:</strong>
-                          <p style={{ color: '#7f1d1d', fontSize: '14px' }}>{missing.join(', ')}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
-                      <a
-                        href={job.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          color: '#4f46e5',
-                          textDecoration: 'none',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                        }}
-                      >
-                        View Job <ExternalLink size={16} />
-                      </a>
-                      <button
-                        onClick={() => handleApplyJob(job)}
-                        disabled={isApplied || missing.length > 0}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          background: isApplied ? '#16a34a' : missing.length > 0 ? '#d1d5db' : '#4f46e5',
-                          color: 'white',
-                          padding: '8px 16px',
-                          borderRadius: '6px',
-                          border: 'none',
-                          cursor: isApplied || missing.length > 0 ? 'not-allowed' : 'pointer',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                        }}
-                      >
-                        <Send size={16} />
-                        {isApplied ? 'Applied' : 'Auto-Apply'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {filteredApps.length === 0 ? (
+            <div style={{ background: 'white', borderRadius: '8px', padding: '32px', textAlign: 'center', color: '#9ca3af' }}>
+              <p>No applications yet. Start by adding your first application!</p>
             </div>
-          </div>
-        )}
+          ) : (
+            filteredApps.map(app => (
+              <div key={app.id} style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', padding: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937' }}>{app.jobTitle}</h3>
+                      <span style={{ fontSize: '14px', background: '#e5e7eb', color: '#374151', padding: '4px 12px', borderRadius: '9999px' }}>{app.applicationType}</span>
+                    </div>
+                    <p style={{ color: '#4b5563', marginBottom: '8px' }}>{app.company}</p>
+                    <p style={{ fontSize: '14px', color: '#6b7280' }}>Applied: {app.dateApplied}</p>
+                  </div>
+                  <button onClick={() => deleteApplication(app.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
+                    <Trash2 size={20} />
+                  </button>
+                </div>
 
-        {!loading && jobs.length === 0 && (
-          <div style={{ background: 'white', borderRadius: '8px', padding: '48px', textAlign: 'center', color: '#9ca3af' }}>
-            <Search size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-            <p style={{ fontSize: '18px' }}>Click "Search for Seasonal Jobs" to find opportunities</p>
-          </div>
-        )}
+                {app.notes && (
+                  <p style={{ color: '#374151', marginBottom: '12px', fontStyle: 'italic' }}>"{app.notes}"</p>
+                )}
+
+                {app.jobUrl && (
+                  <a href={app.jobUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#4f46e5', textDecoration: 'none', marginBottom: '12px', fontSize: '14px' }}>
+                    View Job Posting <ExternalLink size={14} />
+                  </a>
+                )}
+
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {['applied', 'interview', 'rejected', 'offered'].map(s => (
+                    <button
+                      key={s}
+                      onClick={() => updateStatus(app.id, s)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', background: app.status === s ? '#4f46e5' : '#e5e7eb', color: app.status === s ? 'white' : '#374151', fontSize: '14px', fontWeight: '500' }}
+                    >
+                      {app.status === s ? <CheckCircle size={16} /> : <Circle size={16} />}
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
+    </div>
+  );
+}
 
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+function StatCard({ label, value, bgColor }) {
+  return (
+    <div style={{ background: bgColor, borderRadius: '8px', padding: '16px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)' }}>
+      <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937' }}>{value}</div>
+      <div style={{ fontSize: '14px', color: '#6b7280' }}>{label}</div>
     </div>
   );
 }

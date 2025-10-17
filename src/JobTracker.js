@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import { Plus, Trash2, CheckCircle, Circle, ExternalLink, Search } from 'lucide-react';
 
 export default function JobTracker() {
-  const [applications, setApplications] = useState([]);
+  const [applications, setApplications] = useState(() => {
+    // Load from localStorage on first render
+    const saved = localStorage.getItem('jobApplications');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [company, setCompany] = useState('');
