@@ -117,19 +117,25 @@ export default function JobTracker() {
               </div>
               <input type="url" placeholder="Job URL (optional)" value={jobUrl} onChange={(e) => setJobUrl(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit', marginBottom: '16px' }} />
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                <select value={applicationType} onChange={(e) => setApplicationType(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
-                  <option value="online">Online Application</option>
-                  <option value="inperson">In Person</option>
-                  <option value="email">Email</option>
-                  <option value="phone">Phone Call</option>
-                </select>
-                <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
-                  <option value="ready">Ready to Apply</option>
-                  <option value="applied">Applied</option>
-                  <option value="interview">Interview Scheduled</option>
-                  <option value="rejected">Rejected</option>
-                  <option value="offered">Offered</option>
-                </select>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>Application Type</label>
+                  <select value={applicationType} onChange={(e) => setApplicationType(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
+                    <option value="online">Online Application</option>
+                    <option value="inperson">In Person</option>
+                    <option value="email">Email</option>
+                    <option value="phone">Phone Call</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>Status</label>
+                  <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
+                    <option value="ready">Ready to Apply</option>
+                    <option value="applied">Applied</option>
+                    <option value="interview">Interview Scheduled</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="offered">Offered</option>
+                  </select>
+                </div>
               </div>
               <textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} rows="3" style={{ width: '100%', border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit', marginBottom: '16px' }} />
               <div style={{ display: 'flex', gap: '12px' }}>
