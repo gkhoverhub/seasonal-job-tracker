@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2, RefreshCw } from 'lucide-react';
+import { Trash2, RefreshCw, AlertCircle } from 'lucide-react';
 
 export default function AccessLog() {
   const [logs, setLogs] = useState(() => {
@@ -8,6 +8,9 @@ export default function AccessLog() {
   });
 
   const [userLocation, setUserLocation] = useState('Fetching...');
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [clearCode, setClearCode] = useState('');
+  const [correctCode] = useState('SECURE' + new Date().getFullYear());
 
   useEffect(() => {
     // Get user's approximate location from their IP
@@ -15,38 +18,47 @@ export default function AccessLog() {
       try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        setUserLocation(`${data.city}, ${data.region}, ${data.country_name}`);
+        const location = `${data.city}, ${data.region}, ${data.country_name}`;
+        setUserLocation(location);
+        
+        // Also add to current session if this is first load
+        if (logs.length === 0 || logs[0].location === 'Fetching...') {
+          logAccessWithLocation(location);
+        }
       } catch (err) {
         setUserLocation('Location unavailable');
+        logAccessWithLocation('Location unavailable');
       }
     };
     getLocation();
   }, []);
 
-  const logAccess = () => {
+  const logAccessWithLocation = (location) => {
     const newLog = {
       id: Date.now(),
       timestamp: new Date().toLocaleString(),
-      location: userLocation,
+      location: location,
       userAgent: navigator.userAgent.substring(0, 50),
     };
 
-    const updatedLogs = [newLog, ...logs].slice(0, 100); // Keep last 100 logs
+    const existingLogs = JSON.parse(localStorage.getItem('accessLogs')) || [];
+    const updatedLogs = [newLog, ...existingLogs].slice(0, 100);
     setLogs(updatedLogs);
     localStorage.setItem('accessLogs', JSON.stringify(updatedLogs));
   };
 
-  const clearLogs = () => {
-    if (window.confirm('Are you sure you want to clear all access logs? This cannot be undone.')) {
+  const handleClearAttempt = () => {
+    if (clearCode === correctCode) {
       setLogs([]);
       localStorage.removeItem('accessLogs');
+      setShowClearConfirm(false);
+      setClearCode('');
+      alert('Access logs cleared successfully.');
+    } else {
+      alert('Incorrect code. Logs not cleared.');
+      setClearCode('');
     }
   };
-
-  useEffect(() => {
-    // Log access when component mounts
-    logAccess();
-  }, []);
 
   return (
     <div>
@@ -86,25 +98,95 @@ export default function AccessLog() {
         </div>
       )}
 
-      <button
-        onClick={clearLogs}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: '#ef4444',
-          color: 'white',
-          padding: '10px 16px',
-          borderRadius: '8px',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: '500',
-        }}
-      >
-        <Trash2 size={18} />
-        Clear All Logs
-      </button>
+      {!showClearConfirm ? (
+        <button
+          onClick={() => setShowClearConfirm(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: '#ef4444',
+            color: 'white',
+            padding: '10px 16px',
+            borderRadius: '8px',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: '500',
+          }}
+        >
+          <Trash2 size={18} />
+          Clear All Logs
+        </button>
+      ) : (
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '8px', padding: '16px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginBottom: '16px' }}>
+            <AlertCircle size={20} style={{ color: '#dc2626', flexShrink: 0, marginTop: '2px' }} />
+            <div>
+              <p style={{ color: '#991b1b', fontWeight: 'bold', margin: '0 0 8px 0' }}>Confirm Log Deletion</p>
+              <p style={{ color: '#7f1d1d', fontSize: '14px', margin: 0 }}>
+                Enter the confirmation code to clear all access logs. This action cannot be undone.
+              </p>
+              <p style={{ color: '#7f1d1d', fontSize: '12px', margin: '8px 0 0 0', fontStyle: 'italic' }}>
+                Hint: SECURE + current year (e.g., SECURE2025)
+              </p>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            placeholder="Enter confirmation code"
+            value={clearCode}
+            onChange={(e) => setClearCode(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleClearAttempt()}
+            style={{
+              width: '100%',
+              border: '1px solid #fecaca',
+              borderRadius: '8px',
+              padding: '10px',
+              fontSize: '14px',
+              fontFamily: 'inherit',
+              marginBottom: '12px',
+            }}
+          />
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={handleClearAttempt}
+              style={{
+                background: '#dc2626',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+              }}
+            >
+              Confirm Delete
+            </button>
+            <button
+              onClick={() => {
+                setShowClearConfirm(false);
+                setClearCode('');
+              }}
+              style={{
+                background: '#9ca3af',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ export const AVAILABLE_SEARCH_SOURCES = [
   'Direct',
   'LinkedIn',
   'Facebook Jobs',
+  'ziprecruiter',
 ];
 
 // Default search sources to enable
