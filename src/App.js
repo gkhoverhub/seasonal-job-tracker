@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import JobTracker from './JobTracker';
 import JobScraper from './JobScraper';
-import { Briefcase, Search, LogOut, Lock } from 'lucide-react';
+import SearchConfig from './SearchConfig';
+import { Briefcase, Search, LogOut, Lock, Settings } from 'lucide-react';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('tracker');
