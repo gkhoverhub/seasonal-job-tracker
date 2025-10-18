@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, CheckCircle, Circle, ExternalLink, Search } from 'lucide-react';
 
 export default function JobTracker() {
@@ -7,6 +7,11 @@ export default function JobTracker() {
     const saved = localStorage.getItem('jobApplications');
     return saved ? JSON.parse(saved) : [];
   });
+
+  // Save to localStorage whenever applications change
+  useEffect(() => {
+    localStorage.setItem('jobApplications', JSON.stringify(applications));
+  }, [applications]);
   const [searchQuery, setSearchQuery] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [company, setCompany] = useState('');
@@ -49,7 +54,9 @@ export default function JobTracker() {
   };
 
   const deleteApplication = (id) => {
-    setApplications(applications.filter(app => app.id !== id));
+    const updatedApps = applications.filter(app => app.id !== id);
+    setApplications(updatedApps);
+    localStorage.setItem('jobApplications', JSON.stringify(updatedApps));
   };
 
   const updateStatus = (id, newStatus) => {
@@ -68,6 +75,7 @@ export default function JobTracker() {
 
   const stats = {
     total: applications.length,
+    ready: applications.filter(a => a.status === 'ready').length,
     applied: applications.filter(a => a.status === 'applied').length,
     interview: applications.filter(a => a.status === 'interview').length,
     rejected: applications.filter(a => a.status === 'rejected').length,
@@ -84,8 +92,9 @@ export default function JobTracker() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
           <StatCard label="Total Applications" value={stats.total} bgColor="#ffffff" />
+          <StatCard label="Ready to Apply" value={stats.ready} bgColor="#fef3c7" />
           <StatCard label="Applied" value={stats.applied} bgColor="#dbeafe" />
-          <StatCard label="Interviews" value={stats.interview} bgColor="#fef3c7" />
+          <StatCard label="Interviews" value={stats.interview} bgColor="#ffe4e6" />
           <StatCard label="Rejected" value={stats.rejected} bgColor="#fee2e2" />
           <StatCard label="Offered" value={stats.offered} bgColor="#dcfce7" />
         </div>
@@ -115,6 +124,7 @@ export default function JobTracker() {
                   <option value="phone">Phone Call</option>
                 </select>
                 <select value={status} onChange={(e) => setStatus(e.target.value)} style={{ border: '1px solid #d1d5db', borderRadius: '8px', padding: '12px', fontSize: '16px', fontFamily: 'inherit' }}>
+                  <option value="ready">Ready to Apply</option>
                   <option value="applied">Applied</option>
                   <option value="interview">Interview Scheduled</option>
                   <option value="rejected">Rejected</option>
@@ -177,14 +187,14 @@ export default function JobTracker() {
                 )}
 
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {['applied', 'interview', 'rejected', 'offered'].map(s => (
+                  {['ready', 'applied', 'interview', 'rejected', 'offered'].map(s => (
                     <button
                       key={s}
                       onClick={() => updateStatus(app.id, s)}
                       style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: 'none', cursor: 'pointer', background: app.status === s ? '#4f46e5' : '#e5e7eb', color: app.status === s ? 'white' : '#374151', fontSize: '14px', fontWeight: '500' }}
                     >
                       {app.status === s ? <CheckCircle size={16} /> : <Circle size={16} />}
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                      {s === 'ready' ? 'Ready' : s.charAt(0).toUpperCase() + s.slice(1)}
                     </button>
                   ))}
                 </div>
