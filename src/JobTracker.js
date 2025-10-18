@@ -17,7 +17,7 @@ export default function JobTracker() {
   const [company, setCompany] = useState('');
   const [jobUrl, setJobUrl] = useState('');
   const [applicationType, setApplicationType] = useState('online');
-  const [status, setStatus] = useState('applied');
+  const [status, setStatus] = useState('ready');
   const [notes, setNotes] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
@@ -48,7 +48,7 @@ export default function JobTracker() {
     setCompany('');
     setJobUrl('');
     setApplicationType('online');
-    setStatus('applied');
+    setStatus('ready');
     setNotes('');
     setShowForm(false);
   };

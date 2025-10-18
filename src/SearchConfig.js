@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Save, RotateCcw, Plus, Trash2 } from 'lucide-react';
 import AccessLog from './AccessLog';
+import { AVAILABLE_SEARCH_SOURCES, DEFAULT_SEARCH_SOURCES } from './config';
 
 export default function SearchConfig() {
   const [config, setConfig] = useState(() => {
@@ -19,7 +20,7 @@ export default function SearchConfig() {
       keywords: ['seasonal', 'temporary', 'part-time', 'retail', 'warehouse', 'holiday'],
       excludeKeywords: ['hospitality', 'restaurant', 'hotel', 'food service'],
       companies: ['Amazon', 'Costco', "Lowe's", 'Home Depot', 'Dicks Sporting Goods'],
-      searchSources: ['Indeed', 'Craigslist', 'Direct'],
+      searchSources: DEFAULT_SEARCH_SOURCES,
     };
   }
 
@@ -219,7 +220,7 @@ export default function SearchConfig() {
         <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', padding: '24px', marginBottom: '24px' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 'bold', color: '#1f2937', marginBottom: '16px' }}>Search Sources</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-            {['Indeed', 'Craigslist', 'Direct'].map(source => (
+            {AVAILABLE_SEARCH_SOURCES.map(source => (
               <label key={source} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', border: '1px solid #d1d5db', borderRadius: '8px', cursor: 'pointer', background: config.searchSources.includes(source) ? '#dcfce7' : 'white' }}>
                 <input
                   type="checkbox"

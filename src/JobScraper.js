@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { Search, Send, AlertCircle, CheckCircle, ExternalLink, Loader } from 'lucide-react';
 
 export default function JobScraper() {
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState(() => {
+    const saved = localStorage.getItem('jobSearchResults');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [applicationStatus, setApplicationStatus] = useState({});
@@ -28,6 +31,7 @@ export default function JobScraper() {
 
       if (data.success) {
         setJobs(data.jobs);
+        localStorage.setItem('jobSearchResults', JSON.stringify(data.jobs));
       } else {
         setError('Failed to fetch jobs. Please try again.');
       }

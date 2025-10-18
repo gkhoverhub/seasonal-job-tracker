@@ -4,6 +4,9 @@
 
 export const APP_PASSWORD = 'GarryMcDarby2024';
 
+// Password for clearing access logs (different from login password)
+export const CLEAR_LOGS_PASSWORD = 'ClearLogs2024';
+
 // Add more search sources here if needed
 export const AVAILABLE_SEARCH_SOURCES = [
   'Indeed',
@@ -16,4 +19,3 @@ export const AVAILABLE_SEARCH_SOURCES = [
 
 // Default search sources to enable
 export const DEFAULT_SEARCH_SOURCES = ['Indeed', 'Craigslist', 'Direct'];
-

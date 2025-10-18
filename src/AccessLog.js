@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trash2, RefreshCw, AlertCircle } from 'lucide-react';
+import { CLEAR_LOGS_PASSWORD } from './config';
 
 export default function AccessLog() {
   const [logs, setLogs] = useState(() => {
@@ -10,7 +11,6 @@ export default function AccessLog() {
   const [userLocation, setUserLocation] = useState('Fetching...');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [clearCode, setClearCode] = useState('');
-  const [correctCode] = useState('SECURE' + new Date().getFullYear());
 
   useEffect(() => {
     // Get user's approximate location from their IP
@@ -48,14 +48,14 @@ export default function AccessLog() {
   };
 
   const handleClearAttempt = () => {
-    if (clearCode === correctCode) {
+    if (clearCode === CLEAR_LOGS_PASSWORD) {
       setLogs([]);
       localStorage.removeItem('accessLogs');
       setShowClearConfirm(false);
       setClearCode('');
       alert('Access logs cleared successfully.');
     } else {
-      alert('Incorrect code. Logs not cleared.');
+      alert('Incorrect password. Logs not cleared.');
       setClearCode('');
     }
   };
@@ -125,10 +125,10 @@ export default function AccessLog() {
             <div>
               <p style={{ color: '#991b1b', fontWeight: 'bold', margin: '0 0 8px 0' }}>Confirm Log Deletion</p>
               <p style={{ color: '#7f1d1d', fontSize: '14px', margin: 0 }}>
-                Enter the confirmation code to clear all access logs. This action cannot be undone.
+                Enter the password to clear all access logs. This action cannot be undone.
               </p>
               <p style={{ color: '#7f1d1d', fontSize: '12px', margin: '8px 0 0 0', fontStyle: 'italic' }}>
-                Hint: SECURE + current year (e.g., SECURE2025)
+                Password is in src/config.js (CLEAR_LOGS_PASSWORD)
               </p>
             </div>
           </div>
