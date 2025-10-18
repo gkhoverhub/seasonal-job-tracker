@@ -21,6 +21,9 @@ export default function JobTracker() {
   const [notes, setNotes] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
+  
+  // Debug log
+  console.log('Current status value:', status);
 
   const addApplication = () => {
     if (!jobTitle || !company) {
