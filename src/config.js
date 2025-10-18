@@ -15,12 +15,4 @@ export const AVAILABLE_SEARCH_SOURCES = [
 
 // Default search sources to enable
 export const DEFAULT_SEARCH_SOURCES = ['Indeed', 'Craigslist', 'Direct'];
-```
 
-3. Make sure you also created `src/AccessLog.js` with the code from the second artifact
-
-4. Then push:
-```
-git add src/config.js src/AccessLog.js
-git commit -m "Create config and AccessLog files"
-git push
