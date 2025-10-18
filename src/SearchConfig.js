@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, RotateCcw, Plus, Trash2 } from 'lucide-react';
+import AccessLog from './AccessLog';
 
 export default function SearchConfig() {
   const [config, setConfig] = useState(() => {
@@ -233,7 +234,7 @@ export default function SearchConfig() {
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'space-between', marginBottom: '32px' }}>
           <button
             onClick={resetConfig}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#9ca3af', color: 'white', padding: '12px 24px', borderRadius: '8px', border: 'none', cursor: 'pointer', fontSize: '16px', fontWeight: '500' }}
@@ -248,6 +249,11 @@ export default function SearchConfig() {
             <Save size={20} />
             Save Configuration
           </button>
+        </div>
+
+        {/* Access Log Section */}
+        <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', padding: '24px' }}>
+          <AccessLog />
         </div>
       </div>
     </div>

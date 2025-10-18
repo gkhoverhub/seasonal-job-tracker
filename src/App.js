@@ -3,6 +3,7 @@ import JobTracker from './JobTracker';
 import JobScraper from './JobScraper';
 import SearchConfig from './SearchConfig';
 import { Briefcase, Search, LogOut, Lock, Settings } from 'lucide-react';
+import { APP_PASSWORD } from './config';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('tracker');
@@ -17,10 +18,8 @@ export default function App() {
     }
   }, []);
 
-  const CORRECT_PASSWORD = 'GarryMcDarby2024';
-
   const handleLogin = () => {
-    if (loginAttempt === CORRECT_PASSWORD) {
+    if (loginAttempt === APP_PASSWORD) {
       setIsLoggedIn(true);
       sessionStorage.setItem('jobTrackerAuth', 'true');
       setLoginAttempt('');
